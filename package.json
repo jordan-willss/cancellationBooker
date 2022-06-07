@@ -1,8 +1,9 @@
 {
     "name": "cancellation_booker",
+    "main": "index.html",
     "type":"module",
     "scripts": {
-        "search": "node runner.js"
+        "search": "node src/runner.js"
     },
     "dependencies": {
         "node-fetch": "^3.2.4"
