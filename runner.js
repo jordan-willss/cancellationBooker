@@ -85,6 +85,7 @@ const countArray = async (arr) => {
 };
 
 const returnDay = async (timestamp) => {
+  timestamp = parseInt(timestamp);
   let ts = new Date(timestamp);
   let day = ts.getDay();
   return new Promise((res) => {
@@ -93,34 +94,55 @@ const returnDay = async (timestamp) => {
   });
 };
 
+const returnDate = async (timestamp) => {
+  timestamp = parseInt(timestamp);
+  let ts = new Date(timestamp);
+  let date = ts.toString();
+  return new Promise((res) => {
+    res(date);
+  });
+};
+
 let count = 0;
+let availableTestsCount = 0;
 const dayInMs = 86400000;
-const recurGetTests = () => {
+const recurGetTests = async () => {
   getTests(token).then((res) => {
     console.clear();
     console.log(getStatus);
 
     const testSlots = res?.earlierTestSlots;
+
+    let minBookingDate = Date.now() + dayInMs * minDays;
+    let maxBookingDate = Date.now() + dayInMs * maxDays;
     let attemptedBooking = false;
+
     count++;
 
     countArray(testSlots).then((arr) => {
+      let message = [
+        `\nChecked available driving tests ${count} time(s)`,
+        `Checked through ${testSlots.length} potential test(s)`,
+        `There have been ${availableTestsCount} available test(s)\n`,
+      ];
+      message = message.join("\n");
+
       if (arr.length === 0) {
-        console.log(
-          `Checked available driving tests ${count} time(s)\nChecked through ${testSlots.length} potential test(s)`
-        );
+        console.log(message);
         recurGetTests();
       } else {
-        console.log(
-          `Checked available driving tests ${count} time(s)\nChecked through ${testSlots.length} potential test(s)`
-        );
+        console.log(message);
 
-        arr.forEach((entry) => {
+        arr.forEach(async (entry) => {
           let bookingDate = entry?.datetimeMilliSeconds;
-          let minBookingDate = Date.now() + dayInMs * minDays;
-          let maxBookingDate = Date.now() + dayInMs * maxDays;
 
-          returnDay(entry?.datetimeMilliSeconds).then((isDay) => {
+          await returnDate(bookingDate).then((date) => {
+            console.log(date);
+          });
+
+          availableTestsCount++;
+
+          returnDay(entry?.datetimeMilliSeconds).then(async (isDay) => {
             if (
               isDay &&
               bookingDate > minBookingDate &&
@@ -150,4 +172,4 @@ const recurGetTests = () => {
   });
 };
 
-recurGetTests();
+await recurGetTests();
