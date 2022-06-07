@@ -1,0 +1,10 @@
+{
+    "name": "cancellation_booker",
+    "type":"module",
+    "scripts": {
+        "run": "node runner.js"
+    },
+    "dependencies": {
+        "node-fetch": "^3.2.4"
+    }
+}
