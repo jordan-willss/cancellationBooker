@@ -69,6 +69,7 @@ const recurGetTests = () => {
     console.clear();
     console.log(getStatus);
 
+
     const testSlots = res?.earlierTestSlots;
     let attemptedBooking = false;
     count++;
@@ -85,8 +86,8 @@ const recurGetTests = () => {
         );
         arr.forEach((entry) => {
           let bookingDate = entry?.datetimeMilliSeconds;
-          let minBookingDate = bookingDate + dayInMs * minDays;
-          let maxBookingDate = bookingDate + dayInMs * maxDays;
+          let minBookingDate = Date.now() + dayInMs * minDays;
+          let maxBookingDate = Date.now() + dayInMs * maxDays;
 
           if (bookingDate > minBookingDate && bookingDate < maxBookingDate) {
             console.log(entry);
