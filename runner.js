@@ -1,12 +1,13 @@
 import fetch from "node-fetch";
 
 const token =
-  "";
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjNlZDQ4MzlhYWY4ZjNjODM2YWI5NTEiLCJpYXQiOjE2NTI0MjY0MTUsImV4cCI6MTczODgyNjQxNX0.UVJgizRI79rm4LSOZnJ8FfmpiyALyfRIEOdY7SdCY68";
 const minDays = 30;
 const maxDays = 40;
 
 // ---------------------- DO NOT EDIT BELOW ----------------------
 
+let getStatus;
 const getTests = async (token) => {
   const response = fetch(`https://api.drivingtestnow.co.uk/account`, {
     headers: {
@@ -15,11 +16,11 @@ const getTests = async (token) => {
     },
   })
     .then((response) => {
-    //   console.log([
-    //     "GET",
-    //     `https://api.drivingtestnow.co.uk/account`,
-    //     response?.status,
-    //   ]);
+      getStatus = [
+        "GET",
+        `https://api.drivingtestnow.co.uk/account`,
+        response?.status,
+      ];
       return response.json();
     })
     .then((data) => {
@@ -29,6 +30,7 @@ const getTests = async (token) => {
   return response;
 };
 
+let postStatus;
 const bookTests = async (token, testSlotId) => {
   const response = fetch(`https://api.drivingtestnow.co.uk/booktestslot`, {
     method: "POST",
@@ -40,11 +42,11 @@ const bookTests = async (token, testSlotId) => {
       "Content-Type": "application/json",
     },
   });
-//   console.log([
-//     "POST",
-//     `https://api.drivingtestnow.co.uk/booktestslot`,
-//     response?.status,
-//   ]);
+  postStatus = [
+    "POST",
+    `https://api.drivingtestnow.co.uk/booktestslot`,
+    response?.status,
+  ];
   return response;
 };
 
@@ -63,13 +65,14 @@ const countArray = async (arr) => {
 let count = 0;
 const dayInMs = 86400000;
 const recurGetTests = () => {
-  
   getTests(token).then((res) => {
-      console.clear();
-    const testSlots = res?.earlierTestSlots;
+    console.clear();
+    console.log(getStatus);
 
+    const testSlots = res?.earlierTestSlots;
     let attemptedBooking = false;
     count++;
+
     countArray(testSlots).then((arr) => {
       if (arr.length === 0) {
         console.log(
@@ -77,7 +80,9 @@ const recurGetTests = () => {
         );
         recurGetTests();
       } else {
-        console.log(`Checked available driving tests ${count} time(s)\nChecked through ${testSlots.length} potential test(s)`);
+        console.log(
+          `Checked available driving tests ${count} time(s)\nChecked through ${testSlots.length} potential test(s)`
+        );
         arr.forEach((entry) => {
           let bookingDate = entry?.datetimeMilliSeconds;
           let minBookingDate = bookingDate + dayInMs * minDays;
@@ -87,7 +92,7 @@ const recurGetTests = () => {
             console.log(entry);
             // bookTests(token, entry?._id).then((res) => console.log(res));
             attemptedBooking = true;
-          } 
+          }
         });
         attemptedBooking ? null : recurGetTests();
       }
