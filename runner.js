@@ -121,13 +121,6 @@ const recurGetTests = () => {
           let maxBookingDate = Date.now() + dayInMs * maxDays;
 
           returnDay(entry?.datetimeMilliSeconds).then((isDay) => {
-            let ts = new Date(entry?.datetimeMilliSeconds);
-            let day = ts.getDay();
-            let dayStr = Object.keys(daySelection)[day];
-            dayStr =
-              dayStr.charAt(0).toUpperCase() + dayStr.slice(1).toLowerCase();
-            console.log(`The day of the booked test is ${dayStr}`);
-
             if (
               isDay &&
               bookingDate > minBookingDate &&
@@ -136,6 +129,13 @@ const recurGetTests = () => {
               attemptedBooking
                 ? null
                 : bookTests(token, entry?._id).then((res) => {
+                    let ts = new Date(entry?.datetimeMilliSeconds);
+                    let day = ts.getDay();
+                    let dayStr = Object.keys(daySelection)[day];
+                    dayStr =
+                      dayStr.charAt(0).toUpperCase() +
+                      dayStr.slice(1).toLowerCase();
+                    console.log(`The day of the booked test is ${dayStr}`);
                     console.log(res);
                     console.log(postStatus);
                   });
