@@ -104,7 +104,7 @@ const returnDate = async (timestamp) => {
 };
 
 let count = 0;
-let availableTestsCount = 0;
+let pastDates = [];
 const dayInMs = 86400000;
 const recurGetTests = async () => {
   getTests(token).then((res) => {
@@ -123,7 +123,7 @@ const recurGetTests = async () => {
       let message = [
         `\nChecked available driving tests ${count} time(s)`,
         `Checked through ${testSlots.length} potential test(s)`,
-        `There have been ${availableTestsCount} available test(s)\n`,
+        `There have been ${pastDates.length} available test(s)\n`,
       ];
       message = message.join("\n");
 
@@ -137,10 +137,12 @@ const recurGetTests = async () => {
           let bookingDate = entry?.datetimeMilliSeconds;
 
           await returnDate(bookingDate).then((date) => {
-            console.log(date);
+						pastDates.forEach(entry => {
+							console.log(entry);
+						})
+            pastDates.includes(date) ? null : console.log(date);
+						pastDates.push(date);
           });
-
-          availableTestsCount++;
 
           returnDay(entry?.datetimeMilliSeconds).then(async (isDay) => {
             if (
