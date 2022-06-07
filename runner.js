@@ -4,6 +4,15 @@ const token =
   "";
 const minDays = 30;
 const maxDays = 40;
+const daySelection = {
+    sunday: false,
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: true,
+    friday: true,
+    saturday: true
+}
 
 // ---------------------- DO NOT EDIT BELOW ----------------------
 
@@ -62,6 +71,13 @@ const countArray = async (arr) => {
   });
 };
 
+const returnDate = (timestamp) => {
+    let ts = new Date(timestamp);
+    let day = ts.getDay();
+
+    return Object.values(daySelection)[day]
+};
+
 let count = 0;
 const dayInMs = 86400000;
 const recurGetTests = () => {
@@ -69,6 +85,7 @@ const recurGetTests = () => {
     console.clear();
     console.log(getStatus);
 
+    returnDate(Date.now());
 
     const testSlots = res?.earlierTestSlots;
     let attemptedBooking = false;
@@ -84,15 +101,19 @@ const recurGetTests = () => {
         console.log(
           `Checked available driving tests ${count} time(s)\nChecked through ${testSlots.length} potential test(s)`
         );
+        
         arr.forEach((entry) => {
           let bookingDate = entry?.datetimeMilliSeconds;
           let minBookingDate = Date.now() + dayInMs * minDays;
           let maxBookingDate = Date.now() + dayInMs * maxDays;
-
-          if (bookingDate > minBookingDate && bookingDate < maxBookingDate) {
-            console.log(entry);
-            // bookTests(token, entry?._id).then((res) => console.log(res));
-            attemptedBooking = true;
+          
+          let ts = new Date(bookingDate);
+          if(returnDate(bookingDate)) {
+            if (bookingDate > minBookingDate && bookingDate < maxBookingDate) {
+                console.log(entry);
+                // bookTests(token, entry?._id).then((res) => console.log(res));
+                attemptedBooking = true;
+            }
           }
         });
         attemptedBooking ? null : recurGetTests();
