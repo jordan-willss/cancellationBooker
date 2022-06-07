@@ -1,23 +1,25 @@
 import fetch from "node-fetch";
+import { json } from "stream/consumers";
 
 const token =
-  "";
-const minDays = 30;
-const maxDays = 40;
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjNlZDQ4MzlhYWY4ZjNjODM2YWI5NTEiLCJpYXQiOjE2NTI0MjY0MTUsImV4cCI6MTczODgyNjQxNX0.UVJgizRI79rm4LSOZnJ8FfmpiyALyfRIEOdY7SdCY68";
+const minDays = 15;
+const maxDays = 60;
 const daySelection = {
-    sunday: false,
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: true,
-    friday: true,
-    saturday: true
-}
+  sunday: false,
+  monday: true,
+  tuesday: true,
+  wednesday: true,
+  thursday: true,
+  friday: true,
+  saturday: true,
+};
 
 // ---------------------- DO NOT EDIT BELOW ----------------------
 
 let getStatus;
 const getTests = async (token) => {
+  let startTime = Date.now();
   const response = fetch(`https://api.drivingtestnow.co.uk/account`, {
     headers: {
       Authorization: token,
@@ -25,10 +27,12 @@ const getTests = async (token) => {
     },
   })
     .then((response) => {
+      let finTime = Date.now();
       getStatus = [
         "GET",
         `https://api.drivingtestnow.co.uk/account`,
         response?.status,
+        finTime - startTime,
       ];
       return response.json();
     })
@@ -40,22 +44,32 @@ const getTests = async (token) => {
 };
 
 let postStatus;
-const bookTests = async (token, testSlotId) => {
+const bookTests = async (token, slotId) => {
+  const data = { testSlotId: slotId };
+  let startTime = Date.now();
+
   const response = fetch(`https://api.drivingtestnow.co.uk/booktestslot`, {
     method: "POST",
-    body: {
-      testSlotId: testSlotId,
-    },
     headers: {
       Authorization: token,
       "Content-Type": "application/json",
     },
-  });
-  postStatus = [
-    "POST",
-    `https://api.drivingtestnow.co.uk/booktestslot`,
-    response?.status,
-  ];
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      let finTime = Date.now();
+      postStatus = [
+        "POST",
+        `https://api.drivingtestnow.co.uk/booktestslot`,
+        response?.status,
+        finTime - startTime,
+      ];
+      return response.json();
+    })
+    .then((data) => {
+      return data;
+    });
+
   return response;
 };
 
@@ -71,11 +85,13 @@ const countArray = async (arr) => {
   });
 };
 
-const returnDate = (timestamp) => {
-    let ts = new Date(timestamp);
-    let day = ts.getDay();
-
-    return Object.values(daySelection)[day]
+const returnDay = async (timestamp) => {
+  let ts = new Date(timestamp);
+  let day = ts.getDay();
+  return new Promise((res) => {
+    let bool = Object.values(daySelection)[day];
+    res(bool);
+  });
 };
 
 let count = 0;
@@ -84,8 +100,6 @@ const recurGetTests = () => {
   getTests(token).then((res) => {
     console.clear();
     console.log(getStatus);
-
-    returnDate(Date.now());
 
     const testSlots = res?.earlierTestSlots;
     let attemptedBooking = false;
@@ -101,20 +115,35 @@ const recurGetTests = () => {
         console.log(
           `Checked available driving tests ${count} time(s)\nChecked through ${testSlots.length} potential test(s)`
         );
-        
+
         arr.forEach((entry) => {
           let bookingDate = entry?.datetimeMilliSeconds;
           let minBookingDate = Date.now() + dayInMs * minDays;
           let maxBookingDate = Date.now() + dayInMs * maxDays;
-          
-          let ts = new Date(bookingDate);
-          if(returnDate(bookingDate)) {
-            if (bookingDate > minBookingDate && bookingDate < maxBookingDate) {
-                console.log(entry);
-                // bookTests(token, entry?._id).then((res) => console.log(res));
-                attemptedBooking = true;
+
+          returnDay(entry?.datetimeMilliSeconds).then((isDay) => {
+            let ts = new Date(entry?.datetimeMilliSeconds);
+            let day = ts.getDay();
+            let dayStr = Object.keys(daySelection)[day];
+            dayStr =
+              dayStr.charAt(0).toUpperCase() + dayStr.slice(1).toLowerCase();
+            console.log(`The day of the booked test is ${dayStr}`);
+
+            if (
+              isDay &&
+              bookingDate > minBookingDate &&
+              bookingDate < maxBookingDate
+            ) {
+              attemptedBooking
+                ? null
+                : bookTests(token, entry?._id).then((res) => {
+                    console.log(res);
+                    console.log(postStatus);
+                  });
+
+              attemptedBooking = true;
             }
-          }
+          });
         });
         attemptedBooking ? null : recurGetTests();
       }
