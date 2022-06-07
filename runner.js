@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import { json } from "stream/consumers";
 
 const token =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjNlZDQ4MzlhYWY4ZjNjODM2YWI5NTEiLCJpYXQiOjE2NTI0MjY0MTUsImV4cCI6MTczODgyNjQxNX0.UVJgizRI79rm4LSOZnJ8FfmpiyALyfRIEOdY7SdCY68";
+  "";
 const minDays = 15;
 const maxDays = 60;
 const daySelection = {
