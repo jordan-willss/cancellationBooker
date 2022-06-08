@@ -1,30 +1,21 @@
-import fetch from "node-fetch";
+import axios from "axios";
+import { appendTiles, isRunning } from "./interface";
+import * as auth from '../token.json';
 
-const token =
-  "";
-const minDays = 15;
-const maxDays = 60;
-const daySelection = {
-  sunday: false,
-  monday: true,
-  tuesday: true,
-  wednesday: true,
-  thursday: true,
-  friday: true,
-  saturday: true,
-};
+const token = auth.token;
 
 // ---------------------- DO NOT EDIT BELOW ----------------------
 
 let getStatus;
 const getTests = async (token) => {
   let startTime = Date.now();
-  const response = fetch(`https://api.drivingtestnow.co.uk/account`, {
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json",
-    },
-  })
+  const response = axios
+    .get(`https://api.drivingtestnow.co.uk/account`, {
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+    })
     .then((response) => {
       let finTime = Date.now();
       getStatus = [
@@ -33,10 +24,7 @@ const getTests = async (token) => {
         response?.status,
         finTime - startTime,
       ];
-      if (response?.status < 400) return response.json();
-    })
-    .then((data) => {
-      return data;
+      if (response?.status < 400) return response;
     });
 
   return response;
@@ -44,17 +32,22 @@ const getTests = async (token) => {
 
 let postStatus;
 const bookTests = async (token, slotId) => {
+  if (attemptedBooking) return;
+
   const data = { testSlotId: slotId };
   let startTime = Date.now();
 
-  const response = fetch(`https://api.drivingtestnow.co.uk/booktestslot`, {
-    method: "POST",
-    headers: {
-      Authorization: token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
+  const response = axios
+    .post(
+      `https://api.drivingtestnow.co.uk/booktestslot`,
+      { testSlotId: slotId },
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      }
+    )
     .then((response) => {
       let finTime = Date.now();
       postStatus = [
@@ -63,10 +56,8 @@ const bookTests = async (token, slotId) => {
         response?.status,
         finTime - startTime,
       ];
-      if (response?.status < 400) return response.json();
-    })
-    .then((data) => {
-      return data;
+      attemptedBooking = true;
+      if (response?.status < 400) return response;
     });
 
   return response;
@@ -84,7 +75,7 @@ const countArray = async (arr) => {
   });
 };
 
-const returnDay = async (timestamp) => {
+const returnDay = async (timestamp, daySelection) => {
   timestamp = parseInt(timestamp);
   let ts = new Date(timestamp);
   let day = ts.getDay();
@@ -97,79 +88,72 @@ const returnDay = async (timestamp) => {
 const returnDate = async (timestamp) => {
   timestamp = parseInt(timestamp);
   let ts = new Date(timestamp);
-  let date = ts.toString();
+  let date = ts.toUTCString();
   return new Promise((res) => {
     res(date);
   });
 };
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
+let attemptedBooking = false;
 let count = 0;
 let pastDates = [];
 let attemptedBookings = 0;
 const dayInMs = 86400000;
-const recurGetTests = async () => {
-  getTests(token).then((res) => {
-    console.clear();
-    console.log(getStatus);
+export const recurGetTests = async ({
+  minDays,
+  maxDays,
+  daySelection
+}) => {
+  if(!isRunning) return;
 
-    const testSlots = res?.earlierTestSlots;
+  await appendTiles(pastDates);
+  if (isRunning) {
+    getTests(token).then((res) => {
+      const testSlots = res?.data?.earlierTestSlots;
 
-    let minBookingDate = Date.now() + dayInMs * minDays;
-    let maxBookingDate = Date.now() + dayInMs * maxDays;
-    let attemptedBooking = false;
+      let minBookingDate = Date.now() + dayInMs * minDays;
+      let maxBookingDate = Date.now() + dayInMs * maxDays;
+      attemptedBooking = false;
 
-    count++;
+      count++;
 
-    countArray(testSlots).then(async (arr) => {
+      countArray(testSlots).then(async (arr) => {
+        let message = [
+          `\nChecked available driving tests ${count} time(s)`,
+          `There have been ${pastDates.length} available date(s)`,
+          `Attempted to book ${attemptedBookings} test(s)\n`,
+        ];
+        message = message.join("\n");
 
-      let message = [
-        `\nChecked available driving tests ${count} time(s)`,
-        `There have been ${pastDates.length} available test(s)`,
-        `Attempted to book ${attemptedBookings} test(s)\n`
-      ];
-      message = message.join("\n");
+        if (arr.length === 0) {
+          recurGetTests({ minDays, maxDays, daySelection });
+        } else {
+          arr.forEach(async (entry) => {
+            let bookingDate = entry?.datetimeMilliSeconds;
 
-      if (arr.length === 0) {
-        console.log(message);
-        recurGetTests();
-      } else {
-        console.log(message);
+            await returnDate(bookingDate).then((date) => {
+              pastDates.includes(date) ? null : pastDates.push(date);
+            });
 
-        arr.forEach(async (entry) => {
-          let bookingDate = entry?.datetimeMilliSeconds;
-
-          await returnDate(bookingDate).then((date) => {
-            pastDates.includes(date) ? null : pastDates.push(date);
-            console.log(date);
+            await returnDay(bookingDate, daySelection).then(async (isDay) => {
+              if (
+                isDay &&
+                bookingDate > minBookingDate &&
+                bookingDate < maxBookingDate
+              ) {
+                await bookTests(token, entry?._id).then(async (res) => {
+                  console.log(res);
+                });
+                attemptedBookings++;
+                await delay(300000);
+              }
+            });
           });
-
-          await returnDay(bookingDate).then(async (isDay) => {
-            if (
-              isDay &&
-              bookingDate > minBookingDate &&
-              bookingDate < maxBookingDate
-            ) {
-              attemptedBooking
-                ? null
-                : await bookTests(token, entry?._id).then(async (res) => {
-                    await returnDate(bookingDate).then((date) => {
-                      console.log(`\nThe date of the booked test is ${date}\n`);
-                    });
-                    console.log(postStatus);
-                    attemptedBookings++;
-                    await delay(120000);
-                  });
-
-              attemptedBooking = true;
-            }
-          });
-        });
-        await recurGetTests();
-      }
+          await recurGetTests({ minDays, maxDays, daySelection });
+        }
+      });
     });
-  });
+  }
 };
-
-await recurGetTests();
