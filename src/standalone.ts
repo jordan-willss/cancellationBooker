@@ -1,20 +1,22 @@
 import axios, { AxiosResponse } from "axios";
+import { appendTiles, isRunning } from "./index";
 
 const token =
   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjNlZDQ4MzlhYWY4ZjNjODM2YWI5NTEiLCJpYXQiOjE2NTI0MjY0MTUsImV4cCI6MTczODgyNjQxNX0.UVJgizRI79rm4LSOZnJ8FfmpiyALyfRIEOdY7SdCY68";
-const minDays = 15;
-const maxDays = 60;
-const daySelection = {
-  sunday: false,
-  monday: true,
-  tuesday: true,
-  wednesday: true,
-  thursday: true,
-  friday: true,
-  saturday: true,
-};
 
 // ---------------------- DO NOT EDIT BELOW ----------------------
+
+const authHeaders = {
+  Authorization: token,
+  "Content-Type": "application/json",
+};
+let getStatus: Array<any>;
+let postStatus: Array<any>;
+let searchCount: number = 0;
+let attemptedBookings: number = 0;
+const bookingIds: { [key: string]: any } = {};
+const pastDates: Array<string> = [];
+const dayInMs: number = 86_400_000;
 
 interface AccountObject {
   earlierTestSlots: Array<TestObject>;
@@ -26,21 +28,8 @@ interface TestObject {
   available: boolean;
 }
 
-const authHeaders = {
-  Authorization: token,
-  "Content-Type": "application/json",
-};
-let getStatus: Array<any>;
-let postStatus: Array<any>;
-let searchCount: number = 0;
-let attemptedBookings: number = 0;
-const bookingIds: {[key: string]: any} = {};
-const pastDates: Array<string> = [];
-const dayInMs: number = 86_400_000;
-
 const getAccount = async (): Promise<any> => {
   const startTime = Date.now();
-
   const response = axios
     .get<AccountObject>(`https://api.drivingtestnow.co.uk/account`, {
       headers: authHeaders,
@@ -111,9 +100,13 @@ const sortTests = async (
   });
 };
 
-const parseDate = (timestamp: number): Date => new Date(parseInt(String(timestamp)));
+const parseDate = (timestamp: number): Date =>
+  new Date(parseInt(String(timestamp)));
 
-const returnIsDay = async (timestamp: number): Promise<boolean> => {
+const returnIsDay = async (
+  timestamp: number,
+  daySelection: object
+): Promise<boolean> => {
   const day = parseDate(timestamp).getDay();
   return new Promise((res) => {
     res(Object.values(daySelection)[day]);
@@ -132,7 +125,7 @@ const returnShortDate = (timestamp: number): string => {
   return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 };
 
-const returnChosenDays = (): Array<string> => {
+const returnChosenDays = (daySelection: object): Array<string> => {
   const chosenDays = [];
   for (let i = 0; i <= 6; i++) {
     if (Object.values(daySelection)[i]) {
@@ -144,7 +137,15 @@ const returnChosenDays = (): Array<string> => {
   return chosenDays;
 };
 
-const recurGetTests = async (): Promise<any> => {
+export const recurGetTests = async (
+  minDays: number,
+  maxDays: number,
+  daySelection: object
+): Promise<any> => {
+  if (!isRunning) return;
+
+  await appendTiles(pastDates);
+
   await getAccount().then((account: AccountObject) => {
     console.clear();
     console.log(getStatus);
@@ -159,7 +160,9 @@ const recurGetTests = async (): Promise<any> => {
         `\nBooking dates between: ${returnShortDate(
           minBookingDate
         )} - ${returnShortDate(maxBookingDate)}`,
-        `Booking the following days: ${returnChosenDays().join(", ")}`,
+        `Booking the following days: ${returnChosenDays(daySelection).join(
+          ", "
+        )}`,
         `\nChecked available driving tests ${searchCount} time(s)`,
         `Searching through ${testSlots.length} test(s)`,
         `There have been ${pastDates.length} available date(s)`,
@@ -170,7 +173,7 @@ const recurGetTests = async (): Promise<any> => {
       // If there are no tests, recur and return
       if (tests.length === 0) {
         console.log(message);
-        await recurGetTests();
+        await recurGetTests(minDays, maxDays, daySelection);
         return;
       }
 
@@ -185,7 +188,7 @@ const recurGetTests = async (): Promise<any> => {
         });
 
         // Return what day the test is on
-        await returnIsDay(bookingDate).then(async (isDay) => {
+        await returnIsDay(bookingDate, daySelection).then(async (isDay) => {
           // Check that the day is acceptable and that
           // it's in some date range, also that it hasn't
           // already been booking by this runner
@@ -211,9 +214,17 @@ const recurGetTests = async (): Promise<any> => {
       });
 
       console.log(message);
-      await recurGetTests();
+      await recurGetTests(minDays, maxDays, daySelection);
     });
   });
 };
 
-await recurGetTests();
+// await recurGetTests(15, 60, {
+//   sunday: false,
+//   monday: true,
+//   tuesday: true,
+//   wednesday: true,
+//   thursday: true,
+//   friday: true,
+//   saturday: true,
+// });

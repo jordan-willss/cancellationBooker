@@ -4,6 +4,12 @@
     "module": "es2022",
     "lib": ["es2022", "DOM"],
     "moduleResolution": "node",
-    "strict": true
-  }
+    "strict": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types"
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
 }

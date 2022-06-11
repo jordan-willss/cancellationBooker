@@ -4387,29 +4387,160 @@ process.umask = function() { return 0; };
 },{}],37:[function(require,module,exports){
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.appendTiles = appendTiles;
-exports.isRunning = void 0;
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
 
-var _runner = require("./runner");
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
 
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
 
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
 
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
+          case 0:
+          case 1:
+            t = op;
+            break;
+
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+exports.__esModule = true;
+exports.appendTiles = exports.isRunning = void 0;
+
+var standalone_1 = require("./standalone");
 
 var tileContainer;
 var searchButton;
 var searchCounter;
 var noSlots = "<h3 class=\"null_slots_warning\">There are currently no available slots</h3>";
 var notRunning = "<h3 class=\"no_slots_warning\">Search is disabled</h3>";
-var isRunning = false;
-exports.isRunning = isRunning;
+exports.isRunning = false;
 var minDays = 15;
 var maxDays = 60;
 var daySelection = {
@@ -4429,15 +4560,11 @@ function init() {
   tileContainer.innerHTML = notRunning;
 
   searchButton.onclick = function () {
-    exports.isRunning = isRunning = !isRunning;
+    exports.isRunning = !exports.isRunning;
 
-    if (isRunning) {
+    if (exports.isRunning) {
       tileContainer.innerHTML = '';
-      (0, _runner.recurGetTests)({
-        minDays: minDays,
-        maxDays: maxDays,
-        daySelection: daySelection
-      });
+      (0, standalone_1.recurGetTests)(minDays, maxDays, daySelection);
     } else {
       tileContainer.innerHTML = notRunning;
     }
@@ -4445,452 +4572,514 @@ function init() {
 }
 
 var count = 0;
-var formattedArray = [];
+var testDates = [];
 
-function appendTiles() {
-  return _appendTiles.apply(this, arguments);
-}
+function appendTiles(array, options) {
+  if (options === void 0) {
+    options = {};
+  }
 
-function _appendTiles() {
-  _appendTiles = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-    var array,
-        options,
-        _args = arguments;
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            array = _args.length > 0 && _args[0] !== undefined ? _args[0] : [];
-            options = _args.length > 1 && _args[1] !== undefined ? _args[1] : {};
-            return _context.abrupt("return", new Promise(function (res) {
-              count++;
-              count === 1 ? searchCounter.innerText = "There has been ".concat(count, " search") : searchCounter.innerText = "There have been ".concat(count, " searches");
+  return __awaiter(this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+      return [2
+      /*return*/
+      , new Promise(function (res) {
+        // Purely deals with counting
+        count++;
+        count === 1 ? searchCounter.innerText = "There has been ".concat(count, " search") : searchCounter.innerText = "There have been ".concat(count, " searches");
 
-              if (array.length < tileContainer.childElementCount) {
-                formattedArray = [];
-              }
-
-              if (array.length === 0 && tileContainer.innerHTML !== noSlots) {
-                tileContainer.innerHTML = noSlots;
-                res("There are currently no available slots");
-              } else if (tileContainer.childElementCount !== array.length && array.length > 0) {
-                if (tileContainer.innerHTML === noSlots) {
-                  tileContainer.innerHTML = "";
-                }
-
-                for (var i = 0; i < array.length; i++) {
-                  formattedArray[i] = "<div class=\"bc_tile\"><span>".concat(array[i], "</span></div>");
-                }
-
-                if (formattedArray.length === array.length) {
-                  tileContainer.insertAdjacentHTML("beforeend", formattedArray.join("\n"));
-                } else {
-                  tileContainer.innerHTML = "";
-                }
-
-                res("Tiles appended");
-              } else {
-                res("Tiles do not need appending");
-              }
-            }));
-
-          case 3:
-          case "end":
-            return _context.stop();
+        if (array.length < tileContainer.childElementCount) {
+          testDates = [];
         }
-      }
-    }, _callee);
-  }));
-  return _appendTiles.apply(this, arguments);
+
+        if (array.length === 0 && tileContainer.innerHTML !== noSlots) {
+          tileContainer.innerHTML = noSlots;
+          res("There are currently no available slots");
+        } else if (tileContainer.childElementCount !== array.length && array.length > 0) {
+          if (tileContainer.innerHTML === noSlots) {
+            tileContainer.innerHTML = "";
+          }
+
+          for (var i = 0; i < array.length; i++) {
+            testDates[i] = "<div class=\"bc_tile\"><span>".concat(array[i], "</span></div>");
+          }
+
+          if (testDates.length === array.length) {
+            tileContainer.insertAdjacentHTML("beforeend", testDates.join("\n"));
+          } else {
+            tileContainer.innerHTML = "";
+          }
+
+          res("Tiles appended");
+        } else {
+          res("Tiles do not need appending");
+        }
+      })];
+    });
+  });
 }
 
+exports.appendTiles = appendTiles;
 window.addEventListener("load", function () {
   init();
 });
 
-},{"./runner":38}],38:[function(require,module,exports){
+},{"./standalone":38}],38:[function(require,module,exports){
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.recurGetTests = void 0;
-
-var _axios = _interopRequireDefault(require("axios"));
-
-var _interface = require("./interface");
-
-var auth = _interopRequireWildcard(require("../token.json"));
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */ _regeneratorRuntime = function _regeneratorRuntime() { return exports; }; var exports = {}, Op = Object.prototype, hasOwn = Op.hasOwnProperty, $Symbol = "function" == typeof Symbol ? Symbol : {}, iteratorSymbol = $Symbol.iterator || "@@iterator", asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator", toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag"; function define(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: !0, configurable: !0, writable: !0 }), obj[key]; } try { define({}, ""); } catch (err) { define = function define(obj, key, value) { return obj[key] = value; }; } function wrap(innerFn, outerFn, self, tryLocsList) { var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator, generator = Object.create(protoGenerator.prototype), context = new Context(tryLocsList || []); return generator._invoke = function (innerFn, self, context) { var state = "suspendedStart"; return function (method, arg) { if ("executing" === state) throw new Error("Generator is already running"); if ("completed" === state) { if ("throw" === method) throw arg; return doneResult(); } for (context.method = method, context.arg = arg;;) { var delegate = context.delegate; if (delegate) { var delegateResult = maybeInvokeDelegate(delegate, context); if (delegateResult) { if (delegateResult === ContinueSentinel) continue; return delegateResult; } } if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) { if ("suspendedStart" === state) throw state = "completed", context.arg; context.dispatchException(context.arg); } else "return" === context.method && context.abrupt("return", context.arg); state = "executing"; var record = tryCatch(innerFn, self, context); if ("normal" === record.type) { if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue; return { value: record.arg, done: context.done }; } "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg); } }; }(innerFn, self, context), generator; } function tryCatch(fn, obj, arg) { try { return { type: "normal", arg: fn.call(obj, arg) }; } catch (err) { return { type: "throw", arg: err }; } } exports.wrap = wrap; var ContinueSentinel = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} var IteratorPrototype = {}; define(IteratorPrototype, iteratorSymbol, function () { return this; }); var getProto = Object.getPrototypeOf, NativeIteratorPrototype = getProto && getProto(getProto(values([]))); NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype); var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype); function defineIteratorMethods(prototype) { ["next", "throw", "return"].forEach(function (method) { define(prototype, method, function (arg) { return this._invoke(method, arg); }); }); } function AsyncIterator(generator, PromiseImpl) { function invoke(method, arg, resolve, reject) { var record = tryCatch(generator[method], generator, arg); if ("throw" !== record.type) { var result = record.arg, value = result.value; return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) { invoke("next", value, resolve, reject); }, function (err) { invoke("throw", err, resolve, reject); }) : PromiseImpl.resolve(value).then(function (unwrapped) { result.value = unwrapped, resolve(result); }, function (error) { return invoke("throw", error, resolve, reject); }); } reject(record.arg); } var previousPromise; this._invoke = function (method, arg) { function callInvokeWithMethodAndArg() { return new PromiseImpl(function (resolve, reject) { invoke(method, arg, resolve, reject); }); } return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg(); }; } function maybeInvokeDelegate(delegate, context) { var method = delegate.iterator[context.method]; if (undefined === method) { if (context.delegate = null, "throw" === context.method) { if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel; context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method"); } return ContinueSentinel; } var record = tryCatch(method, delegate.iterator, context.arg); if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel; var info = record.arg; return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel); } function pushTryEntry(locs) { var entry = { tryLoc: locs[0] }; 1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry); } function resetTryEntry(entry) { var record = entry.completion || {}; record.type = "normal", delete record.arg, entry.completion = record; } function Context(tryLocsList) { this.tryEntries = [{ tryLoc: "root" }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0); } function values(iterable) { if (iterable) { var iteratorMethod = iterable[iteratorSymbol]; if (iteratorMethod) return iteratorMethod.call(iterable); if ("function" == typeof iterable.next) return iterable; if (!isNaN(iterable.length)) { var i = -1, next = function next() { for (; ++i < iterable.length;) { if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next; } return next.value = undefined, next.done = !0, next; }; return next.next = next; } } return { next: doneResult }; } function doneResult() { return { value: undefined, done: !0 }; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) { var ctor = "function" == typeof genFun && genFun.constructor; return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name)); }, exports.mark = function (genFun) { return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun; }, exports.awrap = function (arg) { return { __await: arg }; }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () { return this; }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) { void 0 === PromiseImpl && (PromiseImpl = Promise); var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl); return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) { return result.done ? result.value : iter.next(); }); }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () { return this; }), define(Gp, "toString", function () { return "[object Generator]"; }), exports.keys = function (object) { var keys = []; for (var key in object) { keys.push(key); } return keys.reverse(), function next() { for (; keys.length;) { var key = keys.pop(); if (key in object) return next.value = key, next.done = !1, next; } return next.done = !0, next; }; }, exports.values = values, Context.prototype = { constructor: Context, reset: function reset(skipTempReset) { if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) { "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined); } }, stop: function stop() { this.done = !0; var rootRecord = this.tryEntries[0].completion; if ("throw" === rootRecord.type) throw rootRecord.arg; return this.rval; }, dispatchException: function dispatchException(exception) { if (this.done) throw exception; var context = this; function handle(loc, caught) { return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught; } for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i], record = entry.completion; if ("root" === entry.tryLoc) return handle("end"); if (entry.tryLoc <= this.prev) { var hasCatch = hasOwn.call(entry, "catchLoc"), hasFinally = hasOwn.call(entry, "finallyLoc"); if (hasCatch && hasFinally) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } else if (hasCatch) { if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0); } else { if (!hasFinally) throw new Error("try statement without catch or finally"); if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc); } } } }, abrupt: function abrupt(type, arg) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) { var finallyEntry = entry; break; } } finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null); var record = finallyEntry ? finallyEntry.completion : {}; return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record); }, complete: function complete(record, afterLoc) { if ("throw" === record.type) throw record.arg; return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel; }, finish: function finish(finallyLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel; } }, "catch": function _catch(tryLoc) { for (var i = this.tryEntries.length - 1; i >= 0; --i) { var entry = this.tryEntries[i]; if (entry.tryLoc === tryLoc) { var record = entry.completion; if ("throw" === record.type) { var thrown = record.arg; resetTryEntry(entry); } return thrown; } } throw new Error("illegal catch attempt"); }, delegateYield: function delegateYield(iterable, resultName, nextLoc) { return this.delegate = { iterator: values(iterable), resultName: resultName, nextLoc: nextLoc }, "next" === this.method && (this.arg = undefined), ContinueSentinel; } }, exports; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-var token = auth.token; // ---------------------- DO NOT EDIT BELOW ----------------------
-
-var getStatus;
-
-var getTests = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(token) {
-    var startTime, response;
-    return _regeneratorRuntime().wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            startTime = Date.now();
-            response = _axios["default"].get("https://api.drivingtestnow.co.uk/account", {
-              headers: {
-                Authorization: token,
-                "Content-Type": "application/json"
-              }
-            }).then(function (response) {
-              var finTime = Date.now();
-              getStatus = ["GET", "https://api.drivingtestnow.co.uk/account", response === null || response === void 0 ? void 0 : response.status, finTime - startTime];
-              console.log(response);
-              if ((response === null || response === void 0 ? void 0 : response.status) < 400) return response;
-            });
-            return _context.abrupt("return", response);
-
-          case 3:
-          case "end":
-            return _context.stop();
-        }
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
       }
-    }, _callee);
-  }));
+    }
 
-  return function getTests(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-var postStatus;
-
-var bookTests = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(token, slotId) {
-    var data, startTime, response;
-    return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            if (!attemptedBooking) {
-              _context2.next = 2;
-              break;
-            }
-
-            return _context2.abrupt("return");
-
-          case 2:
-            data = {
-              testSlotId: slotId
-            };
-            startTime = Date.now();
-            response = _axios["default"].post("https://api.drivingtestnow.co.uk/booktestslot", {
-              testSlotId: slotId
-            }, {
-              headers: {
-                Authorization: token,
-                "Content-Type": "application/json"
-              }
-            }).then(function (response) {
-              var finTime = Date.now();
-              postStatus = ["POST", "https://api.drivingtestnow.co.uk/booktestslot", response === null || response === void 0 ? void 0 : response.status, finTime - startTime];
-              attemptedBooking = true;
-              if ((response === null || response === void 0 ? void 0 : response.status) < 400) return response;
-            });
-            return _context2.abrupt("return", response);
-
-          case 6:
-          case "end":
-            return _context2.stop();
-        }
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
       }
-    }, _callee2);
-  }));
+    }
 
-  return function bookTests(_x2, _x3) {
-    return _ref2.apply(this, arguments);
-  };
-}();
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
 
-var countArray = /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(arr) {
-    var newArr;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) {
-        switch (_context3.prev = _context3.next) {
-          case 0:
-            newArr = [];
-            return _context3.abrupt("return", new Promise(function (res) {
-              arr.forEach(function (entry) {
-                if ((entry === null || entry === void 0 ? void 0 : entry.available) === true) {
-                  newArr.push(entry);
-                }
-              });
-              res(newArr);
-            }));
-
-          case 2:
-          case "end":
-            return _context3.stop();
-        }
-      }
-    }, _callee3);
-  }));
-
-  return function countArray(_x4) {
-    return _ref3.apply(this, arguments);
-  };
-}();
-
-var returnDay = /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(timestamp, daySelection) {
-    var ts, day;
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) {
-        switch (_context4.prev = _context4.next) {
-          case 0:
-            timestamp = parseInt(timestamp);
-            ts = new Date(timestamp);
-            day = ts.getDay();
-            return _context4.abrupt("return", new Promise(function (res) {
-              var bool = Object.values(daySelection)[day];
-              res(bool);
-            }));
-
-          case 4:
-          case "end":
-            return _context4.stop();
-        }
-      }
-    }, _callee4);
-  }));
-
-  return function returnDay(_x5, _x6) {
-    return _ref4.apply(this, arguments);
-  };
-}();
-
-var returnDate = /*#__PURE__*/function () {
-  var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(timestamp) {
-    var ts, date;
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-      while (1) {
-        switch (_context5.prev = _context5.next) {
-          case 0:
-            timestamp = parseInt(timestamp);
-            ts = new Date(timestamp);
-            date = ts.toUTCString();
-            return _context5.abrupt("return", new Promise(function (res) {
-              res(date);
-            }));
-
-          case 4:
-          case "end":
-            return _context5.stop();
-        }
-      }
-    }, _callee5);
-  }));
-
-  return function returnDate(_x7) {
-    return _ref5.apply(this, arguments);
-  };
-}();
-
-var delay = function delay(ms) {
-  return new Promise(function (res) {
-    return setTimeout(res, ms);
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
   });
 };
 
-var attemptedBooking = false;
-var count = 0;
-var pastDates = [];
-var attemptedBookings = 0;
-var dayInMs = 86400000;
+var __generator = void 0 && (void 0).__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function sent() {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
 
-var recurGetTests = /*#__PURE__*/function () {
-  var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(_ref6) {
-    var minDays, maxDays, daySelection;
-    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-      while (1) {
-        switch (_context10.prev = _context10.next) {
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
+
+        switch (op[0]) {
           case 0:
-            minDays = _ref6.minDays, maxDays = _ref6.maxDays, daySelection = _ref6.daySelection;
+          case 1:
+            t = op;
+            break;
 
-            if (_interface.isRunning) {
-              _context10.next = 3;
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
+
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
+
+          case 7:
+            op = _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
               break;
             }
 
-            return _context10.abrupt("return");
-
-          case 3:
-            _context10.next = 5;
-            return (0, _interface.appendTiles)(pastDates);
-
-          case 5:
-            if (_interface.isRunning) {
-              getTests(token).then(function (res) {
-                var _res$data;
-
-                var testSlots = res === null || res === void 0 ? void 0 : (_res$data = res.data) === null || _res$data === void 0 ? void 0 : _res$data.earlierTestSlots;
-                var minBookingDate = Date.now() + dayInMs * minDays;
-                var maxBookingDate = Date.now() + dayInMs * maxDays;
-                attemptedBooking = false;
-                count++;
-                countArray(testSlots).then( /*#__PURE__*/function () {
-                  var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(arr) {
-                    var message;
-                    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-                      while (1) {
-                        switch (_context9.prev = _context9.next) {
-                          case 0:
-                            message = ["\nChecked available driving tests ".concat(count, " time(s)"), "There have been ".concat(pastDates.length, " available date(s)"), "Attempted to book ".concat(attemptedBookings, " test(s)\n")];
-                            message = message.join("\n");
-
-                            if (!(arr.length === 0)) {
-                              _context9.next = 6;
-                              break;
-                            }
-
-                            recurGetTests({
-                              minDays: minDays,
-                              maxDays: maxDays,
-                              daySelection: daySelection
-                            });
-                            _context9.next = 9;
-                            break;
-
-                          case 6:
-                            arr.forEach( /*#__PURE__*/function () {
-                              var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(entry) {
-                                var bookingDate;
-                                return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-                                  while (1) {
-                                    switch (_context8.prev = _context8.next) {
-                                      case 0:
-                                        bookingDate = entry === null || entry === void 0 ? void 0 : entry.datetimeMilliSeconds;
-                                        _context8.next = 3;
-                                        return returnDate(bookingDate).then(function (date) {
-                                          pastDates.includes(date) ? null : pastDates.push(date);
-                                        });
-
-                                      case 3:
-                                        _context8.next = 5;
-                                        return returnDay(bookingDate, daySelection).then( /*#__PURE__*/function () {
-                                          var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(isDay) {
-                                            return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-                                              while (1) {
-                                                switch (_context7.prev = _context7.next) {
-                                                  case 0:
-                                                    if (!(isDay && bookingDate > minBookingDate && bookingDate < maxBookingDate)) {
-                                                      _context7.next = 6;
-                                                      break;
-                                                    }
-
-                                                    _context7.next = 3;
-                                                    return bookTests(token, entry === null || entry === void 0 ? void 0 : entry._id).then( /*#__PURE__*/function () {
-                                                      var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(res) {
-                                                        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-                                                          while (1) {
-                                                            switch (_context6.prev = _context6.next) {
-                                                              case 0:
-                                                                console.log(res);
-
-                                                              case 1:
-                                                              case "end":
-                                                                return _context6.stop();
-                                                            }
-                                                          }
-                                                        }, _callee6);
-                                                      }));
-
-                                                      return function (_x12) {
-                                                        return _ref11.apply(this, arguments);
-                                                      };
-                                                    }());
-
-                                                  case 3:
-                                                    attemptedBookings++;
-                                                    _context7.next = 6;
-                                                    return delay(300000);
-
-                                                  case 6:
-                                                  case "end":
-                                                    return _context7.stop();
-                                                }
-                                              }
-                                            }, _callee7);
-                                          }));
-
-                                          return function (_x11) {
-                                            return _ref10.apply(this, arguments);
-                                          };
-                                        }());
-
-                                      case 5:
-                                      case "end":
-                                        return _context8.stop();
-                                    }
-                                  }
-                                }, _callee8);
-                              }));
-
-                              return function (_x10) {
-                                return _ref9.apply(this, arguments);
-                              };
-                            }());
-                            _context9.next = 9;
-                            return recurGetTests({
-                              minDays: minDays,
-                              maxDays: maxDays,
-                              daySelection: daySelection
-                            });
-
-                          case 9:
-                          case "end":
-                            return _context9.stop();
-                        }
-                      }
-                    }, _callee9);
-                  }));
-
-                  return function (_x9) {
-                    return _ref8.apply(this, arguments);
-                  };
-                }());
-              });
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
             }
 
-          case 6:
-          case "end":
-            return _context10.stop();
-        }
-      }
-    }, _callee10);
-  }));
+            if (t && _.label < t[2]) {
+              _.label = t[2];
 
-  return function recurGetTests(_x8) {
-    return _ref7.apply(this, arguments);
-  };
-}();
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
+      }
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+exports.__esModule = true;
+exports.recurGetTests = void 0;
+
+var axios_1 = require("axios");
+
+var index_1 = require("./index");
+
+var token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjNlZDQ4MzlhYWY4ZjNjODM2YWI5NTEiLCJpYXQiOjE2NTI0MjY0MTUsImV4cCI6MTczODgyNjQxNX0.UVJgizRI79rm4LSOZnJ8FfmpiyALyfRIEOdY7SdCY68"; // ---------------------- DO NOT EDIT BELOW ----------------------
+
+var authHeaders = {
+  Authorization: token,
+  "Content-Type": "application/json"
+};
+var getStatus;
+var postStatus;
+var searchCount = 0;
+var attemptedBookings = 0;
+var bookingIds = {};
+var pastDates = [];
+var dayInMs = 86400000;
+
+var getAccount = function getAccount() {
+  return __awaiter(void 0, void 0, void 0, function () {
+    var startTime, response;
+    return __generator(this, function (_a) {
+      startTime = Date.now();
+      response = axios_1["default"].get("https://api.drivingtestnow.co.uk/account", {
+        headers: authHeaders
+      }).then(function (response) {
+        var finTime = Date.now();
+        getStatus = ["GET", "https://api.drivingtestnow.co.uk/account", response === null || response === void 0 ? void 0 : response.status, finTime - startTime];
+        return response;
+      })["catch"](function (err) {
+        console.log(err);
+        return {
+          earlierTestSlots: new Array()
+        };
+      });
+      return [2
+      /*return*/
+      , response];
+    });
+  });
+};
+
+var bookTest = function bookTest(slotId) {
+  return __awaiter(void 0, void 0, void 0, function () {
+    var data, startTime, response;
+    return __generator(this, function (_a) {
+      data = {
+        testSlotId: slotId
+      };
+      startTime = Date.now();
+      response = axios_1["default"].post("https://api.drivingtestnow.co.uk/booktestslot", {
+        body: JSON.stringify(data)
+      }, {
+        headers: authHeaders
+      }).then(function (response) {
+        var finTime = Date.now();
+        postStatus = ["POST", "https://api.drivingtestnow.co.uk/booktestslot", response === null || response === void 0 ? void 0 : response.status, finTime - startTime];
+        return response;
+      })["catch"](function (err) {
+        console.log(err);
+        return {};
+      });
+      return [2
+      /*return*/
+      , response];
+    });
+  });
+};
+
+var sortTests = function sortTests(tests) {
+  return __awaiter(void 0, void 0, void 0, function () {
+    var acceptableTests;
+    return __generator(this, function (_a) {
+      acceptableTests = [];
+      return [2
+      /*return*/
+      , new Promise(function (res) {
+        tests.forEach(function (entry) {
+          if ((entry === null || entry === void 0 ? void 0 : entry.available) === true) {
+            acceptableTests.push(entry);
+          }
+        });
+        res(acceptableTests);
+      })];
+    });
+  });
+};
+
+var parseDate = function parseDate(timestamp) {
+  return new Date(parseInt(String(timestamp)));
+};
+
+var returnIsDay = function returnIsDay(timestamp, daySelection) {
+  return __awaiter(void 0, void 0, void 0, function () {
+    var day;
+    return __generator(this, function (_a) {
+      day = parseDate(timestamp).getDay();
+      return [2
+      /*return*/
+      , new Promise(function (res) {
+        res(Object.values(daySelection)[day]);
+      })];
+    });
+  });
+};
+
+var returnDate = function returnDate(timestamp) {
+  return __awaiter(void 0, void 0, void 0, function () {
+    var date;
+    return __generator(this, function (_a) {
+      date = parseDate(timestamp).toString();
+      return [2
+      /*return*/
+      , new Promise(function (res) {
+        res(date);
+      })];
+    });
+  });
+};
+
+var returnShortDate = function returnShortDate(timestamp) {
+  var date = parseDate(timestamp);
+  return "".concat(date.getDate(), "/").concat(date.getMonth() + 1, "/").concat(date.getFullYear());
+};
+
+var returnChosenDays = function returnChosenDays(daySelection) {
+  var chosenDays = [];
+
+  for (var i = 0; i <= 6; i++) {
+    if (Object.values(daySelection)[i]) {
+      var str = Object.keys(daySelection)[i];
+      str = str.slice(0, 1).toUpperCase() + str.slice(1);
+      chosenDays.push(str);
+    }
+  }
+
+  return chosenDays;
+};
+
+var recurGetTests = function recurGetTests(minDays, maxDays, daySelection) {
+  return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+      switch (_a.label) {
+        case 0:
+          if (!index_1.isRunning) return [2
+          /*return*/
+          ];
+          return [4
+          /*yield*/
+          , (0, index_1.appendTiles)(pastDates)];
+
+        case 1:
+          _a.sent();
+
+          return [4
+          /*yield*/
+          , getAccount().then(function (account) {
+            console.clear();
+            console.log(getStatus);
+            searchCount++;
+            var testSlots = account === null || account === void 0 ? void 0 : account.earlierTestSlots;
+            var minBookingDate = Date.now() + dayInMs * minDays;
+            var maxBookingDate = Date.now() + dayInMs * maxDays;
+            sortTests(testSlots).then(function (tests) {
+              return __awaiter(void 0, void 0, void 0, function () {
+                var message;
+                return __generator(this, function (_a) {
+                  switch (_a.label) {
+                    case 0:
+                      message = ["\nBooking dates between: ".concat(returnShortDate(minBookingDate), " - ").concat(returnShortDate(maxBookingDate)), "Booking the following days: ".concat(returnChosenDays(daySelection).join(", ")), "\nChecked available driving tests ".concat(searchCount, " time(s)"), "Searching through ".concat(testSlots.length, " test(s)"), "There have been ".concat(pastDates.length, " available date(s)"), "Attempted to book ".concat(attemptedBookings, " test(s)"), "Booking IDs: ".concat(JSON.stringify(bookingIds), "\n")].join("\n");
+                      if (!(tests.length === 0)) return [3
+                      /*break*/
+                      , 2];
+                      console.log(message);
+                      return [4
+                      /*yield*/
+                      , (0, exports.recurGetTests)(minDays, maxDays, daySelection)];
+
+                    case 1:
+                      _a.sent();
+
+                      return [2
+                      /*return*/
+                      ];
+
+                    case 2:
+                      tests.forEach(function (test) {
+                        return __awaiter(void 0, void 0, void 0, function () {
+                          var bookingId, bookingDate;
+                          return __generator(this, function (_a) {
+                            switch (_a.label) {
+                              case 0:
+                                bookingId = test === null || test === void 0 ? void 0 : test._id;
+                                bookingDate = test === null || test === void 0 ? void 0 : test.datetimeMilliSeconds; // Log tests that are currently available
+
+                                return [4
+                                /*yield*/
+                                , returnDate(bookingDate).then(function (date) {
+                                  if (!pastDates.includes(date)) pastDates.push(date);
+                                  console.log(date);
+                                })];
+
+                              case 1:
+                                // Log tests that are currently available
+                                _a.sent(); // Return what day the test is on
+
+
+                                return [4
+                                /*yield*/
+                                , returnIsDay(bookingDate, daySelection).then(function (isDay) {
+                                  return __awaiter(void 0, void 0, void 0, function () {
+                                    return __generator(this, function (_a) {
+                                      switch (_a.label) {
+                                        case 0:
+                                          if (!(isDay && bookingDate > minBookingDate && bookingDate < maxBookingDate && (!bookingIds[bookingId] || bookingIds[bookingId] > Date.now() + 300000))) return [3
+                                          /*break*/
+                                          , 2]; // Book the test
+
+                                          return [4
+                                          /*yield*/
+                                          , bookTest(bookingId).then(function () {
+                                            return __awaiter(void 0, void 0, void 0, function () {
+                                              return __generator(this, function (_a) {
+                                                switch (_a.label) {
+                                                  case 0:
+                                                    return [4
+                                                    /*yield*/
+                                                    , returnDate(bookingDate).then(function (date) {
+                                                      console.log("\nThe date of the booked test is ".concat(date, "\n").concat(postStatus));
+                                                    })];
+
+                                                  case 1:
+                                                    _a.sent();
+
+                                                    return [2
+                                                    /*return*/
+                                                    ];
+                                                }
+                                              });
+                                            });
+                                          })];
+
+                                        case 1:
+                                          // Book the test
+                                          _a.sent();
+
+                                          bookingIds[bookingId] = Date.now();
+                                          attemptedBookings++;
+                                          _a.label = 2;
+
+                                        case 2:
+                                          return [2
+                                          /*return*/
+                                          ];
+                                      }
+                                    });
+                                  });
+                                })];
+
+                              case 2:
+                                // Return what day the test is on
+                                _a.sent();
+
+                                return [2
+                                /*return*/
+                                ];
+                            }
+                          });
+                        });
+                      });
+                      console.log(message);
+                      return [4
+                      /*yield*/
+                      , (0, exports.recurGetTests)(minDays, maxDays, daySelection)];
+
+                    case 3:
+                      _a.sent();
+
+                      return [2
+                      /*return*/
+                      ];
+                  }
+                });
+              });
+            });
+          })];
+
+        case 2:
+          _a.sent();
+
+          return [2
+          /*return*/
+          ];
+      }
+    });
+  });
+};
 
 exports.recurGetTests = recurGetTests;
+await (0, exports.recurGetTests)(15, 60, {
+  sunday: false,
+  monday: true,
+  tuesday: true,
+  wednesday: true,
+  thursday: true,
+  friday: true,
+  saturday: true
+});
 
-},{"../token.json":39,"./interface":37,"axios":1}],39:[function(require,module,exports){
-module.exports={
-    "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MjNlZDQ4MzlhYWY4ZjNjODM2YWI5NTEiLCJpYXQiOjE2NTI0MjY0MTUsImV4cCI6MTczODgyNjQxNX0.UVJgizRI79rm4LSOZnJ8FfmpiyALyfRIEOdY7SdCY68"
-}
-},{}]},{},[37,38]);
+},{"./index":37,"axios":1}]},{},[37,38]);
