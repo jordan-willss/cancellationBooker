@@ -96,24 +96,24 @@ const sortTests = async (arr = []) => {
 	});
 };
 
-const date = (timestamp = '') => new Date(parseInt(timestamp));
+const parseDate = (timestamp = '') => new Date(parseInt(timestamp));
 
 const returnDay = async (timestamp = '') =>  {
-	const day = date(timestamp).getDay();
+	const day = parseDate(timestamp).getDay();
 	return new Promise(res => {
 		res(Object.values(daySelection)[day]);
 	});
 };
 
 const returnDate = async timestamp => {
-	const date = date(timestamp).toString();
+	const date = parseDate(timestamp).toString();
 	return new Promise(res => {
 		res(date);
 	});
 };
 
 const returnShortDate = (timestamp) => {
-	const date = date(timestamp);
+	const date = parseDate(timestamp);
 	return(`${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`);
 };
 

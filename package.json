@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "tsc": "npx -p typescript tsc",
-    "bundle": "browserify src/index.js src/standalone.js -o out/bundle.js",
+    "bundle": "browserify src/index.ts src/standalone.ts -o out/bundle.js -t [ babelify --global ]",
     "build": "npx tsc && npx bundle",
     "search": "node old/standalone.js"
   },
@@ -12,23 +12,33 @@
     "axios": "^0.27.2"
   },
   "devDependencies": {
-    "node-fetch": "^3.2.5",
     "@babel/preset-env": "^7.18.2",
+    "babel-eslint": "^10.1.0",
     "babel-preset-es2015": "^6.24.1",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
+    "node-fetch": "^3.2.5",
     "typescript": "^4.7.3"
   },
+  "sourceType": "module",
   "browserify": {
     "transform": [
       [
         "babelify",
         {
           "presets": [
-            "@babel/preset-env"
+            "babel-preset-es2015",
+            {
+              "sourceType": "module"
+            }
           ]
         }
       ]
     ]
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
   }
 }
