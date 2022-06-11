@@ -4,16 +4,19 @@
   "type": "module",
   "scripts": {
     "bundle": "browserify src/interface.js src/runner.js -o out/bundle.js",
-    "search": "node src/standalone.js"
+    "search": "node src/standalone.js",
+    "searchTs": "node src/standaloneTs.ts"
   },
   "dependencies": {
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "node-fetch": "^3.2.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.2",
     "babel-preset-es2015": "^6.24.1",
     "babelify": "^10.0.0",
-    "browserify": "^17.0.0"
+    "browserify": "^17.0.0",
+    "typescript": "^4.7.3"
   },
   "browserify": {
     "transform": [

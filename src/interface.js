@@ -2,6 +2,7 @@ import { recurGetTests } from "./runner";
 
 let tileContainer;
 let searchButton;
+let searchCounter;
 
 const noSlots = `<h3 class="null_slots_warning">There are currently no available slots</h3>`;
 const notRunning = `<h3 class="no_slots_warning">Search is disabled</h3>`;
@@ -21,7 +22,10 @@ const daySelection = {
 
 function init() {
   tileContainer = document.getElementById("tile-container");
-  searchButton = document.getElementById("search_button");
+  searchButton = document.getElementById("search-button");
+	searchCounter = document.getElementById("search-counter")
+
+	tileContainer.innerHTML = notRunning;
 
   searchButton.onclick = () => {
     isRunning = !isRunning;
@@ -35,14 +39,22 @@ function init() {
   };
 }
 
+let count = 0;
 let formattedArray = [];
 export async function appendTiles(array = [], options = {}) {
   return new Promise((res) => {
+		count++;
+		count === 1 ?
+			searchCounter.innerText = `There has been ${count} search` :
+			searchCounter.innerText = `There have been ${count} searches`;
+		if (array.length < tileContainer.childElementCount) {
+			formattedArray = [];
+		}
+
     if (array.length === 0 && tileContainer.innerHTML !== noSlots) {
       tileContainer.innerHTML = noSlots;
       res("There are currently no available slots");
     } else if (tileContainer.childElementCount !== array.length && array.length > 0) {
-      formattedArray = [];
       if (tileContainer.innerHTML === noSlots) {
         tileContainer.innerHTML = "";
       }
@@ -57,7 +69,9 @@ export async function appendTiles(array = [], options = {}) {
           "beforeend",
           formattedArray.join("\n")
         );
-      }
+      } else {
+				tileContainer.innerHTML = "";
+			}
       res("Tiles appended");
     } else {
       res("Tiles do not need appending");

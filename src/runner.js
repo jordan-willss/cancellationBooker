@@ -24,6 +24,7 @@ const getTests = async (token) => {
         response?.status,
         finTime - startTime,
       ];
+      console.log(response)
       if (response?.status < 400) return response;
     });
 
